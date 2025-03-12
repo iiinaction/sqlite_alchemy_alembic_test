@@ -4,7 +4,7 @@ from sqlalchemy import String, Integer, ForeignKey, ARRAY, text, JSON
 from typing import Annotated, List
 from sql_enums import GenderEnum, ProfessionEnum, StatusPost, RatingEnum
 
-# Аннотации (сокращаем повторяющийся код)
+# Аннотации
 uniq_str_an = Annotated[str, mapped_column(unique=True)]
 array_or_none_an = Annotated[List[str] | None, mapped_column(JSON)]
 
@@ -12,8 +12,8 @@ class User(Base):
     username:Mapped[uniq_str_an]
     email:Mapped[uniq_str_an]
     password:Mapped[str]
-    profile_id:Mapped[int | None] = mapped_column(ForeignKey('profiles.id'))
-
+    # profile_id:Mapped[int | None] = mapped_column(ForeignKey('profiles.id'))
+    
     #relationship
     # Связь один-ко-многим с Post
     posts: Mapped[list["Post"]] = relationship(
@@ -46,7 +46,9 @@ class Profile(Base):
     )
     interests:Mapped[array_or_none_an]
     contacts:Mapped[dict | None] = mapped_column(JSON)
-    
+    # Внешний ключ на таблицу users
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), unique=True)
+
     #relationship
     user:Mapped["User"] = relationship(
         "User",
@@ -93,4 +95,4 @@ class Comment(Base):
 
     )
     
-
+    
